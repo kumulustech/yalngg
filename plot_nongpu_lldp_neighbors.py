@@ -1,7 +1,6 @@
 import json
 import networkx as nx
 import matplotlib.pyplot as plt
-from networkx.drawing.nx_agraph import graphviz_layout
 
 # Load LLDP data from JSON file
 def load_lldp_data(json_file):
@@ -36,17 +35,17 @@ def create_graph(lldp_data, exclude_prefix='gpu'):
     
     return G
 
-# Visualize the graph with a hierarchical layout
+# Visualize the graph
 def visualize_graph(G, output_file='network_graph.png'):
     plt.figure(figsize=(20, 20))  # Increase the figure size
-    pos = graphviz_layout(G, prog='dot')  # Use 'dot' for hierarchical layout
+    pos = nx.spring_layout(G, seed=42, k=0.5, center=(0, 0))  # Adjust k and center for better spacing
     nx.draw(G, pos, with_labels=True, node_size=3000, node_color="lightblue", font_size=12, font_weight="bold")
     
     # Draw edge labels with port information
     edge_labels = {(u, v): f"{d['local_port']} <-> {d['neighbor_port']}" for u, v, d in G.edges(data=True)}
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
     
-    plt.title("Network Connectivity Graph (Hierarchical Layout)")
+    plt.title("Network Connectivity Graph")
     plt.savefig(output_file)
     plt.show()
 
